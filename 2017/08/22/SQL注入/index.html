@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="PHP, Linux,Mysql" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="一、什么是SQL注入？SQL注入指的是发生在数据库层的安全漏洞，把SQL命令插入到 Web表单提交或输入域名或页面请求的查询字符串中（也就是在输入的字符串中注入SQL指令），这样在设计不良的程序中忽略了检查，导致数据库会把注入的SQL 语句当做正常的SQL指令运行，因此造成破坏和入侵。 二、SQL注入危害及实验如果后台连接验证采用select * from users WHERE account=">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SQL注入分享">
+<meta property="og:url" content="http://yoursite.com/2017/08/22/SQL注入/index.html">
+<meta property="og:site_name" content="小杰的技术园">
+<meta property="og:description" content="一、什么是SQL注入？SQL注入指的是发生在数据库层的安全漏洞，把SQL命令插入到 Web表单提交或输入域名或页面请求的查询字符串中（也就是在输入的字符串中注入SQL指令），这样在设计不良的程序中忽略了检查，导致数据库会把注入的SQL 语句当做正常的SQL指令运行，因此造成破坏和入侵。 二、SQL注入危害及实验如果后台连接验证采用select * from users WHERE account=">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-08-22T07:11:28.530Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SQL注入分享">
+<meta name="twitter:description" content="一、什么是SQL注入？SQL注入指的是发生在数据库层的安全漏洞，把SQL命令插入到 Web表单提交或输入域名或页面请求的查询字符串中（也就是在输入的字符串中注入SQL指令），这样在设计不良的程序中忽略了检查，导致数据库会把注入的SQL 语句当做正常的SQL指令运行，因此造成破坏和入侵。 二、SQL注入危害及实验如果后台连接验证采用select * from users WHERE account=">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'DIY-green'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/08/22/SQL注入/"/>
+
+
+
+
+
+  <title>SQL注入分享 | 小杰的技术园</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小杰的技术园</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">菜鸟基地</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/22/SQL注入/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yujie.feng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小杰的技术园">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">SQL注入分享</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-22T14:39:12+08:00">
+                2017-08-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一、什么是SQL注入？"><a href="#一、什么是SQL注入？" class="headerlink" title="一、什么是SQL注入？"></a>一、什么是SQL注入？</h1><p>SQL注入指的是发生在数据库层的安全漏洞，把SQL命令插入到 Web表单提交或输入域名或页面请求的查询字符串中（也就是在输入的字符串中注入SQL指令），这样在设计不良的程序中忽略了检查，导致数据库会把注入的SQL 语句当做正常的SQL指令运行，因此造成破坏和入侵。</p>
+<h1 id="二、SQL注入危害及实验"><a href="#二、SQL注入危害及实验" class="headerlink" title="二、SQL注入危害及实验"></a>二、SQL注入危害及实验</h1><p>如果后台连接验证采用<code>select * from users WHERE account=&#39;&quot; .$acco. &quot;&#39; and  pass=&#39;&quot; .$pass. &quot;&#39;;&quot;;</code>这种字符串拼接方式进行验证，很容易绕过判断进行登录！</p>
+<h4 id="1-绕过验证进行登录："><a href="#1-绕过验证进行登录：" class="headerlink" title="1.绕过验证进行登录："></a>1.绕过验证进行登录：</h4><p>在账号和密码框中均输入：<code>1&#39; or &#39;1=1</code>,就可以绕过验证，登录成功，以下是生成sql语句以及验证通过的提示：逻辑为（假or真and真or假）：<br><strong>select * from users WHERE account=’1’or ‘1=1’ and pass=’1’or ‘1=1’;登录成功！</strong></p>
+<h4 id="2-删除表的行为："><a href="#2-删除表的行为：" class="headerlink" title="2.删除表的行为："></a>2.删除表的行为：</h4><p>在这种情况下在用户名中输入<code>&#39;; drop table test -- ，</code>这样可以删除掉名为test的表格，但是这种操作后台需要使用<code>msyqli_multi_query()</code>同时执行多条sql语句才可以做到，<code>mysqli_query（）</code>不会出现这种情况。</p>
+<h4 id="3-通过结果返回获取数据库信息"><a href="#3-通过结果返回获取数据库信息" class="headerlink" title="3.通过结果返回获取数据库信息"></a>3.通过结果返回获取数据库信息</h4><p>除了上述操作之外，通过在文本框输入其他的SQL语句，还可以获得数据库内容的更多信息以及更多的权限。通过对字段的暴力猜解等操作，可以逐步确定确定列属性名，密码长度，以及破解密码等各种信息。下面举个例子：</p>
+<ul>
+<li>获取密码列属性名称：</li>
+</ul>
+<ol>
+<li>第一步猜解密码列属性名称，用户名随便输入，密码字段输入<code>&#39; or (select count(password) from users)&gt;0 --</code>验证时登录失败，证明字段猜解错误，输出的结果如下：<br><strong>select * from users WHERE account=’admin’ and pass=’’ or (select count(password) from users)&gt;0 – ‘;登录失败！ </strong></li>
+<li>将password修改为pass，这时提示登录成功，表示猜解成功，该表密码属性名称为pass</li>
+</ol>
+<ul>
+<li>获取密码长度：</li>
+</ul>
+<ol>
+<li>用户中随便输入，密码框中输入<code>&#39; or (Select count(*) from users where account=&#39;fengyujie&#39; and length(pass)&gt;1)&gt;0 --</code>，验证密码长度是否大于1，这里前提是知道存在的一个用户名，输出结果如下：<br><strong>select <em> from users WHERE account=’admin’ and pass=’’ or (Select count(</em>) from users where account=’fengyujie’ and length(pass)&gt;1)&gt;0 – ‘;登录成功！ </strong></li>
+<li>同上操作验证密码长度小于10，并且逐步缩小密码长度范围，最终可以确定密码长度。</li>
+</ol>
+<ul>
+<li><p>猜解密码内容：</p>
+<p>  密码框内输入<code>&#39; or (Select count(*) from users where account=&#39;fengyujie&#39; and mid(pass,1,1)&gt;&#39;1&#39;)&gt;0 --</code>返回登录失败，说明首位字符的值小于等于1，这样可以逐步获得密码字符的范围一直到确定密码字符。</p>
+</li>
+</ul>
+<h4 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h4><p>通过以上方式，后台通过动态生成sql语句进行数据库登录信息的验证，很容易受到黑客的攻击并且获得相应的数据信息，极度不安全，以上均通过具体实验进行了验证。同时通过对sql语句的修改，可以获得数据库的更多信息或者更高权限，如果能够获得数据库返回的具体异常信息，则数据库更容易被攻击，PHP代码中返回的异常信息不会返回数据库执行时的异常结果。例如在执行如下语句:<br><code>SELECT count(name) users ;</code><br>    数据库中会提示<code>“Unknown column &#39;name&#39; in field list”</code>, 但是在PHP页面中捕获的异常会在对执行结果<code>$result-&gt;mysqli_query($con,&quot;select count(name) form users;&quot;);</code>进行操作时才会报出异常，例如在执行<code>$result-&gt;num_rows</code>才会提示异常$result为bool变量，也就是说sql语句无法执行时，在默认情况下mysqli_query执行错误，会返回false结果，不会返回exception。</p>
+<h1 id="三、SQL注入的分类"><a href="#三、SQL注入的分类" class="headerlink" title="三、SQL注入的分类"></a>三、SQL注入的分类</h1><ul>
+<li>注入途径分类</li>
+</ul>
+<ol>
+<li><p>WEB端对数据库进行注入攻击:<br>通过WEB端今夕攻击中攻击者多采用拼接语句的方法改变查询内容，获取账号下的全部信息，与上面的实验内容相同。</p>
+</li>
+<li><p>直接连接数据库进行攻击<br>这种攻击下，攻击者以数据库用户的身份直接连接数据库进行SQL注入攻击，通过执行SQL语句从而提高用户权限或者越权执行。<br>高级的攻击手段通常会结合两种方式，利用WEB端应用获取数据库和服务器相关信息，再利用数据库自身对获取的数据库账号进行提权和越权的操作。</p>
+</li>
+</ol>
+<ul>
+<li>注入方式分类</li>
+</ul>
+<ol>
+<li><p>SQL操作（SQL Manipulation）<br>这种方式的原来是攻击者会试图在已经存在的SQL语句中添加集合运算符（比如INTERSECT,  UNION）,例如上面实验中的验证登录过程。</p>
+</li>
+<li><p>代码注入攻击（Code Injection）<br>这种操作是在已经存在的SQL语句中，添加额外的SQL语句进行执行，例如上面实验中的msyqli_multi_query()允许多个SQL语句进行提交。</p>
+</li>
+<li><p>函数调用注入攻击（Function Call Injection）<br>该方式的攻击是因为数据库函数或者自定义的函数中存在某些漏洞，攻击者通过对问题函数进行SQL注入从而使函数可以执行非预期功能而达到攻击者的目的。<br>例如：通过Oracle数据库的DBA权限建立自定义的存储过程test： </p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">create</span> <span class="keyword">or</span> <span class="keyword">replace</span> <span class="keyword">procedure</span> <span class="keyword">test</span> (putin varchar2) <span class="keyword">as</span> <span class="keyword">type</span> c_type <span class="keyword">is</span> <span class="keyword">ref</span> <span class="keyword">cursor</span>;  </div><div class="line">cv c_type;</div><div class="line">buffer varchar2(200);</div><div class="line"><span class="keyword">begin</span> dbms_output.enable(<span class="number">1000000</span>);</div><div class="line">open cv for ‘<span class="keyword">select</span> object_name <span class="keyword">from</span> all_objects <span class="keyword">where</span> owner =’’’||putin||’’’<span class="keyword">and</span> object_type=’’<span class="keyword">library</span>’’’’;</div><div class="line">…</div><div class="line">close cv;</div><div class="line"> <span class="keyword">End</span>;</div></pre></td></tr></table></figure>
+<p> 接下来低权限用户建立构造一个想要执行的命令函数： </p>
+ <figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">Create</span> <span class="keyword">or</span> <span class="keyword">replace</span> <span class="keyword">function</span> get_dba <span class="keyword">return</span> <span class="built_in">varchar</span> <span class="keyword">authid</span> <span class="keyword">current_user</span> <span class="keyword">is</span> <span class="keyword">Pragma</span> autonomous_transaction; </div><div class="line"> <span class="keyword">Begin</span>  </div><div class="line"><span class="keyword">Execute</span> <span class="keyword">immediate</span> ‘<span class="keyword">grant</span> dba <span class="keyword">to</span> scott’;</div><div class="line"><span class="keyword">End</span>; /</div></pre></td></tr></table></figure>
+<p> 在这里test是用来查询用户所拥有的库，但是为了方便其他用户调用，该存储过程被赋予了所有权限，导致任何用户可以执行test存储过程。但是函数采用了定义者权限定义test，导致其他用户在执行test的时候也获得了DBA权限，这样低权限用户在创建注入函数get_dba，通过test把低权限用户提权到DBA权限。</p>
+ <figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Exec sys.test(‘AAAA’||username.get_dba()—‘);</div></pre></td></tr></table></figure>
+</li>
+<li><p>缓冲区溢出攻击（Buffer Over Flows）<br>通过对某些没有及时打补丁的数据库做SQL注入攻击可以利用到缓冲区溢出漏洞，当攻击者通过SQL注入攻击来利用缓冲区溢出漏洞的时候，可以实现远程连接操作系统，此外，一些应用程序和WEB服务器不能正常处理缓冲区溢出造成的数据连接中断，通过WEB进程将被挂起，甚至导致拒绝服务攻击的发生。</p>
+</li>
+</ol>
+<h1 id="四、防范SQL注入"><a href="#四、防范SQL注入" class="headerlink" title="四、防范SQL注入"></a>四、防范SQL注入</h1><ol>
+<li><p>输入验证<br>检查用户输入的合法性，但是前端验证过程很容易通过前端源码进行修改，因此前端验证只是为了增强用户体验，对于安全防护的等级太低，最好的办法是在前端还有服务器后端都进行输入信息的验证。 </p>
+</li>
+<li><p>错误信息处理<br>防止返回过于详细的错误信息，尤其有关于数据库结构之类的信息给用户。</p>
+</li>
+<li><p>加密处理<br>对用户的输入数据进行加密处理，然后再与数据库内的信息进行对比，这样用户输入的有关数据库操作的sql语句将失去意义。</p>
+</li>
+<li><p>使用存储过程<br>通过该种方式可以有效防止攻击者利用单引号和连字符进行攻击，用户输入需要严格按照存储过程的安全上下文进行输入。 </p>
+</li>
+<li><p>限制数据库的权限<br>对于用户的一些权限进行明确的限制，例如普通用户和管理员的权限等，进行严格的权限设置。</p>
+</li>
+<li><p>在后台设计时，禁止使用动态生成sql语句的方式，通过使用预处理操作和参数化的过滤性语句可以有效防止攻击者输入的sql语句操作，例如prepare()方法和addslashes()。</p>
+</li>
+</ol>
+<h1 id="五、mysqli和PDO连接数据库分析"><a href="#五、mysqli和PDO连接数据库分析" class="headerlink" title="五、mysqli和PDO连接数据库分析"></a>五、mysqli和PDO连接数据库分析</h1><ol>
+<li><p>使用mysqli和PDO进行数据库连接时都可以通过prepare预处理方法避免sql注入，但是在PDO对象在访问Mysql时不是使用真正的预备义语句，但是可以通过以下语句进行设置：setAttribute(PDO::ATTR_EMULATE_PREPARES,false);<br>这样可以确保语句和值在发送给Mysql数据库时不会被PHP解析。</p>
+</li>
+<li><p>获取数据库返回的异常<br>在进行后台设计时，尽量不要返回数据库信息给用户，但是在开发过程中，由于mysqli和PDO在执行sql语句时默认都不返回异常结果，对于代码调试并不友好，以上两种方式分别可以通过mysqli_errno($con).mysqli_error($con)和setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);两种方式获取异常结果。</p>
+</li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/08/15/测试/测试/" rel="next" title="我的第一篇博客">
+                <i class="fa fa-chevron-left"></i> 我的第一篇博客
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/images/avatar.jpg"
+               alt="yujie.feng" />
+          <p class="site-author-name" itemprop="name">yujie.feng</p>
+           
+              <p class="site-description motion-element" itemprop="description">小杰的一个博客，PHP学习</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、什么是SQL注入？"><span class="nav-number">1.</span> <span class="nav-text">一、什么是SQL注入？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、SQL注入危害及实验"><span class="nav-number">2.</span> <span class="nav-text">二、SQL注入危害及实验</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-绕过验证进行登录："><span class="nav-number">2.0.0.1.</span> <span class="nav-text">1.绕过验证进行登录：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-删除表的行为："><span class="nav-number">2.0.0.2.</span> <span class="nav-text">2.删除表的行为：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-通过结果返回获取数据库信息"><span class="nav-number">2.0.0.3.</span> <span class="nav-text">3.通过结果返回获取数据库信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#总结："><span class="nav-number">2.0.0.4.</span> <span class="nav-text">总结：</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、SQL注入的分类"><span class="nav-number">3.</span> <span class="nav-text">三、SQL注入的分类</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、防范SQL注入"><span class="nav-number">4.</span> <span class="nav-text">四、防范SQL注入</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、mysqli和PDO连接数据库分析"><span class="nav-number">5.</span> <span class="nav-text">五、mysqli和PDO连接数据库分析</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yujie.feng</span>
+
+  
+</div>
+
+
+  <div class="powered-by">
+    由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+  </div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">
+    主题 &mdash;
+    <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+      NexT.Pisces
+    </a>
+  </div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
